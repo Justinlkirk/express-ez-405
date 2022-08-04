@@ -10,7 +10,6 @@
 - [Output](#output)
 - [Example](#example)
 - [Optional Argument](#optional-arguments)
-- [Conclusion](#conclusion)
 
 ## Introduction
 
