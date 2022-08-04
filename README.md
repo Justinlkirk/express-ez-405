@@ -116,7 +116,3 @@ app.use('/user/prime', userRouter);
   ect. ect.
 */
 ```
-
-## Conclusion
-
-I'm fairly new to coding professionally  and I'm a little obsessed with making everything as dynamic as humanly possible. I also hate having to update small things in 20 different locations every time a small change is made. I built this so that I could drop it into the bottom of all of my routes and feel comfortable never touching it again. If you have any input, experience any issues, or have any questions feel free to reach out.

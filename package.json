@@ -1,6 +1,6 @@
 {
   "name": "express-ez-405",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple plug and play functions that can be dropped into the bottom of any express route to handle 405 and 404 errors dynamically.",
   "main": "index.js",
   "scripts": {
