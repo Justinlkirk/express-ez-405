@@ -1,5 +1,25 @@
+const { z } = require('zod');
+
+const requestSchema = z.object({
+  originalUrl: z.string(),
+  method: z.string(),
+});
+const routerSchema = z.object({
+  stack: z.array()
+})
+
 module.exports = {
   buildError(request, router, routeNesting = 1) {
+    try {
+      requestSchema.parse(request);
+      routerSchema.parse(router);
+      z.number().int().positive().parse(routeNesting);
+    } catch (zodErr) {
+      const error = new Error(zodErr.message, { cause: zodErr.message });
+      error.status = 400;
+      return error;
+    }
+
     const { originalUrl, method } = request;
     const { stack } = router;
     if (method === 'OPTIONS') return null;
@@ -50,5 +70,17 @@ module.exports = {
       console.log(cause, 'CAUSE')
       return error;
     }
+  },
+
+  buildAllErrors(request, ...routes) {
+    let error;
+    for (const currRoute of routes) {
+      if (Object.keys(currRoute).length === 2 && 'nestLevel' in currRoute)
+        error = buildError(request, currRoute.route, currRoute.nestLevel)
+      else error = buildError(request, currRoute);
+
+      if (err === null || error.status === 405 || error.status === 400) return error;
+    }
+    return error;
   }
 }
