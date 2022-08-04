@@ -47,6 +47,8 @@ module.exports = {
       }
       const error = new Error(cause, { cause });
       error.status = 405;
+      console.log(cause, 'CAUSE')
       return error;
     }
   }
+}

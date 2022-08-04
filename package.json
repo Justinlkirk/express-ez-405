@@ -1,0 +1,23 @@
+{
+  "name": "express-ez-405",
+  "version": "1.0.1",
+  "description": "Simple plug and play functions that can be dropped into the bottom of any express route to handle 405 and 404 errors dynamically.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Justinlkirk/express-ez-405.git"
+  },
+  "keywords": [
+    "EXPRESS",
+    "405"
+  ],
+  "author": "Justin Kirk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Justinlkirk/express-ez-405/issues"
+  },
+  "homepage": "https://github.com/Justinlkirk/express-ez-405#readme"
+}
