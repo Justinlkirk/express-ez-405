@@ -9,7 +9,7 @@
 
 - [Introduction](#introduction)
 - [Setup](#setup)
-- [Output](#output)
+- [Outputs](#outputs)
 - [Example](#example)
 
 ## Introduction
