@@ -47,7 +47,10 @@ const determinePossibleMethods = (stack, attemptedUrl) => {
         const subErrMess = validateSubLayer(subLayer);
         if (subErrMess) return subErrMess;
 
-        const routeInRouter = `${subLayer.regexp}`.split('\\')[1];
+        const routeInRouter = `${subLayer.regexp}`
+          .split('\\') // Seperates the string at every '\'
+          .slice(1, -2) // Gets rid of the first index and last two indexes (the regex)
+          .join(''); // Puts the string back together so that all the remains is the route
         const completeRoute = (
           routeInServer + routeInRouter
         ).toLocaleLowerCase();
