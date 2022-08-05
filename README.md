@@ -1,29 +1,30 @@
 # express-ez-405
-![Build Passing](https://img.shields.io/badge/build-passing-blue)
+
+[![Build Passing](https://img.shields.io/badge/build-passing-blue)](https://github.com/Justinlkirk/express-ez-405-tests)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Justinlkirk/express-ez-405)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Release: 1.1](https://img.shields.io/badge/Release-1.1-orange)
 
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [Setup](#setup)
 - [Output](#output)
-- [Build Error Example](#build-error-example)
-- [Build All Errors Example](#build-all-errors-example)
-- [Nested Routes](#nested-routes)
+- [Example](#example)
 
 ## Introduction
 
-Express Ez 405 provides a quick and dynamic means of generating 405 and 404 errors in Express routes. Unlike other similar solutions this package aims to be set it and forget it, with the error messages being built dynamically from the other methods on the route so that you should never have to update it regardless of how your routes change. Express Ez 405 is lightweight, easy to use, and comes with one dependency, Zod, which has no dependencies.
+Express Ez 405 provides a quick and dynamic means of generating 405 and 404 errors in Express routes with detailed error messages describing available routes. Unlike other similar solutions this package aims to be set it and forget it, with the error messages being built dynamically from the other methods on the route so that you should never have to update it regardless of how your routes change. Express Ez 405 is lightweight, easy to use, and comes with zero dependencies!
 
 ## Setup
 
-Install with `npm i express-ez-405` and import into each of your routes with 
+Install with `npm i express-ez-405` and import into the file in which you determine your routing,
+
 ```
 const { buildError } = require('express-ez-405');
 ```
 
-Then drop a catch all route at the bottom of each of your routes like such
+then drop a catch all route after your last route
 
 ```
 router.use('/', (req, _, next) => {
@@ -33,7 +34,7 @@ router.use('/', (req, _, next) => {
 });
 ```
 
-and then forget about it! You should now be able to add and remove routes and the resulting errors should represent what is currently available, not what was available the last time you touched this.
+and then forget about it! You will now be able to add, remove, and update routes and the resulting errors will represent what is currently available, not what was available the last time you touched this.
 
 ## Outputs
 
@@ -42,83 +43,44 @@ There are three possible outputs of `buildError`:
 1. `null` Method used was 'OPTIONS' (prevents handler from catching pre-flights)
 2. Instance of `Error` with a status of `405` and a message of `'You attempted a GET request to /user/makead try POST.'`. Method didn't match any of the avialable methods.
 3. Instance of `Error` with a status of `404` and a message of `'Could not find the appropriate endpoint for /user/notanendpoint in /user'`. No endpoints matched what you were looking for.
+4. Instance of `Error` with a status of `400` and a message of `'Error with second argument (request). No method property on request.`. You passed invalid information. Check the arguments you provided and the order in which they were provided (This will only ever be an issue on initial setup, once everything is there it will be good regardless of how your application grows).
 
-## Build Error Example
+## Example
 
-This pattern involves adding the `buildError` function to the bottom of each route. If you want to add a single function to the server see [Build All Errors](#build-all-errors-example).
-Server
-```
-const express = require('express');
+The only thing to watch out for here is to make sure you have an error handler middleware, and that express-easy-405 comes AFTER your last route.
 
-const app = express();
-app.use(express.json());
-const userRouter = require('./routes/user');
-
-app.use('/user', userRouter);
-/*
-  ect. ect.
-*/
-```
-
-Router
 ```
 const express = require('express');
 const { buildError } = require('express-ez-405');
 
-const router = express.Router();
+const app = express();
+app.use(express.json());
+const userRouter = require('./routes/user');
+const mainRouter = require('./routes/main');
+const nestedRouter = require('./routes/nested');
 
-router.post(
-  '/makeAD',
-  // middleware
-  (req, res) => res.status(200).send(res.locals.user)
-);
+// Routes
+app.use('/main', mainRouter);
+app.use('/user', userRouter);
+app.use('/nested/route', nestedRouter);
+// Routes
 
-router.use('/', (req, _, next) => {
-  const err = buildError(req, router);
+// express-ez-405 handler
+app.use('', (req, _, next) => {
+  const err = buildError(app, req);
   if (!err) return next();
   return next(err);
 });
+// express-ez-405 handler
 
-module.exports = router;
-```
+// Error handling
+app.use((err, _, res, __) =>
+  res.status(err.status).json({ message: err.message })
+);
+// Error handling
 
-## Build All Errors Example
-
-This pattern involves adding a single function to your server file, or wherever you establish your routing, but its arguments can be a little more complex. If you want the simpler version that is added to each route see [Build Error](#build-error-example).
-
-
-## Nested Routes
-
-In the event that your route is nested more than one layer deep you will need to provide a third argument noting how deep this particular route is nested. See examples below
-
-No argument (or 1 if you're feeling frisky) `buildError(req, router);` or `buildError(req, router, 1);`
-
-Server
-```
-const express = require('express');
-
-const app = express();
-app.use(express.json());
-const userRouter = require('./routes/user');
-
-app.use('/user', userRouter);
-/*
-  ect. ect.
-*/
-```
-
-Nested 2 '/' deep `buildError(req, router, 2);`
-
-Server
-```
-const express = require('express');
-
-const app = express();
-app.use(express.json());
-const userRouter = require('./routes/user');
-
-app.use('/user/prime', userRouter);
-/*
-  ect. ect.
-*/
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server listening on port: ${PORT}...`);
+});
 ```
