@@ -3,7 +3,7 @@
 [![Build Passing](https://img.shields.io/badge/build-passing-blue)](https://github.com/Justinlkirk/express-ez-405-tests)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Justinlkirk/express-ez-405)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Release: 1.1](https://img.shields.io/badge/Release-1.1-orange)
+![Release: 2.0](https://img.shields.io/badge/Release-2.0-orange)
 
 ## Table of Contents
 
