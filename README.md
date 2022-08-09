@@ -27,8 +27,8 @@ const { buildError } = require('express-ez-405');
 then drop a catch all route after your last route
 
 ```
-router.use('/', (req, _, next) => {
-  const err = buildError(req, router);
+app.use("", (req, _, next) => {
+  const err = buildError(app, req);
   if (!err) return next();
   return next(err);
 });
