@@ -1,6 +1,6 @@
 {
   "name": "express-ez-405",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Simple plug and play function that can be dropped below your route declarations and forgotten about.",
   "main": "index.js",
   "scripts": {
