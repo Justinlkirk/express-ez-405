@@ -1,33 +1,33 @@
 const validateLayer = (layer) => {
-  if (!('handle' in layer))
+  if (!layer?.hasOwnProperty('handle'))
     return `Error with first argument (app). Layer in app._router.stack does not have a handle property.`;
-  if (typeof layer.handle !== 'function')
+  if (typeof layer?.handle !== 'function')
     return `Error with first argument (app). layer.handle in app._router.stack is not a function.`;
-  if (!('stack' in layer.handle))
+  if (!layer?.handle?.hasOwnProperty('stack'))
     return `Error with first argument (app). layer.handle in app._router.stack does not have a stack property.`;
-  if (!(layer.handle.stack instanceof Array))
+  if (!(layer?.handle?.stack instanceof Array))
     return `Error with first argument (app). layer.handle.stack in app._router.stack is not an array.`;
-  if (!('regexp' in layer))
+  if (!layer?.hasOwnProperty('regexp'))
     return `Error with first argument (app). layer in app._router.stack does not have a regexp property.`;
-  if (!(layer.regexp instanceof RegExp))
+  if (!(layer?.regexp instanceof RegExp))
     return `Error with first argument (app). layer.regexp in app._router.stack is not an instance of regexp.`;
-  if (typeof `${layer.regexp}`.split('\\')[1] !== 'string')
+  if (typeof `${layer?.regexp}`.split('\\')[1] !== 'string')
     return `Error with first argument (app). layer.regexp in app._router.stack did not properly break down into a string.`;
   return null;
 };
 
 const validateSubLayer = (subLayer) => {
-  if (!('regexp' in subLayer))
+  if (!subLayer?.hasOwnProperty('regexp'))
     return `Error with first argument (app). subLayer in layer.handle.stack in app._route.stack does not have a regexp property.`;
-  if (!(subLayer.regexp instanceof RegExp))
-    return `Error with first argument (app). subLayer in layer.handle.stack in app._router.stack is not an instance of regexp.`;
-  if (typeof `${subLayer.regexp}`.split('\\')[1] !== 'string')
-    return `Error with first argument (app). subLayer in layer.handle.stack in app._router.stack did not properly break down into a string.`;
-  if (!('route' in subLayer))
+  if (!(subLayer?.regexp instanceof RegExp))
+    return `Error with first argument (app). subLayer.regexp in layer.handle.stack in app._router.stack is not an instance of regexp.`;
+  if (typeof `${subLayer?.regexp}`.split('\\')[1] !== 'string')
+    return `Error with first argument (app). subLayer.regexp in layer.handle.stack in app._router.stack did not properly break down into a string.`;
+  if (!subLayer?.hasOwnProperty('route'))
     return `Error with first argument (app). subLayer in layer.handle.stack in app._route.stack does not have a route property.`;
-  if (!('methods' in subLayer.route))
+  if (!subLayer?.route?.hasOwnProperty('methods'))
     return `Error with first argument (app). subLayer.route in layer.handle.stack in app._route.stack does not have a methods property.`;
-  if (!(subLayer.route.methods instanceof Object))
+  if (!(subLayer?.route?.methods instanceof Object))
     return `Error with first argument (app). subLayer.route.methods in layer.handle.stack in app._route.stack is not an Object.`;
 
   return null;
@@ -36,26 +36,26 @@ const validateSubLayer = (subLayer) => {
 const determinePossibleMethods = (stack, attemptedUrl) => {
   const possibleMethods = [];
   for (const layer of stack) {
-    if (layer.name === 'router') {
+    if (layer?.name === 'router') {
       const errMess = validateLayer(layer);
       if (errMess) return errMess;
-      const routeInServer = `${layer.regexp}`
-        .split('\\') // Seperates the string at every '\'
+      const routeInServer = `${layer?.regexp}`
+        .split('\\') // Separates the string at every '\'
         .slice(1, -2) // Gets rid of the first index and last two indexes (the regex)
-        .join(''); // Puts the string back together so that all the remains is the route
-      for (const subLayer of layer.handle.stack) {
+        .join(''); // Puts the string back together so that all that remains is the route
+      for (const subLayer of layer?.handle?.stack) {
         const subErrMess = validateSubLayer(subLayer);
         if (subErrMess) return subErrMess;
 
-        const routeInRouter = `${subLayer.regexp}`
-          .split('\\') // Seperates the string at every '\'
-          .slice(1, -1) // Gets rid of the first index and last two indexes (the regex)
-          .join(''); // Puts the string back together so that all the remains is the route
+        const routeInRouter = `${subLayer?.regexp}`
+          .split('\\') // Separates the string at every '\'
+          .slice(1, -1) // Gets rid of the first index and last index (the regex)
+          .join(''); // Puts the string back together so that all that remains is the route
         const completeRoute = (
           routeInServer + routeInRouter
         ).toLocaleLowerCase();
         if (completeRoute === attemptedUrl) {
-          Object.keys(subLayer.route.methods).forEach((method) =>
+          Object.keys(subLayer?.route?.methods).forEach((method) =>
             possibleMethods.push(method)
           );
         }
@@ -102,19 +102,19 @@ const validateInputs = (app, req) => {
   try {
     if (typeof app !== 'function')
       throw 'Error with first argument (app). app is not a function.';
-    if (!('_router' in app))
+    if (!app?.hasOwnProperty('_router'))
       throw 'Error with first argument (app). No _router property.';
-    if (typeof app._router !== 'function')
+    if (typeof app?._router !== 'function')
       throw 'Error with first argument (app). app._router is not a function.';
-    if (!(app._router.stack instanceof Array))
+    if (!(app?._router.stack instanceof Array))
       throw 'Error with first argument (app). app._router.stack is not an array.';
-    if (!('originalUrl' in req))
+    if (!req?.hasOwnProperty('originalUrl'))
       throw 'Error with second argument (request). No originalUrl property on request.';
-    if (typeof req.originalUrl !== 'string')
+    if (typeof req?.originalUrl !== 'string')
       throw 'Error with second argument (request). req.originalUrl is not a string.';
-    if (!('method' in req))
+    if (!req?.hasOwnProperty('method'))
       throw 'Error with second argument (request). No method property on request.';
-    if (typeof req.method !== 'string')
+    if (typeof req?.method !== 'string')
       throw 'Error with second argument (request). req.method is not a string.';
   } catch (cause) {
     const error = new Error(cause, {
